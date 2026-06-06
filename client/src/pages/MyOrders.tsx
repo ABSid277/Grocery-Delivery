@@ -2,16 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useCart } from '../context/CartContext';
 import { Order } from '../types';
 import { Link, useSearchParams } from 'react-router-dom';
-import { dummyDashboardOrdersData } from '../assets/assets';
 import { CalendarIcon, ChevronRightIcon, PackageIcon } from 'lucide-react';
 import Loading from '../components/Loading';
-
-// Configuration object for dynamic status badges
-const statusColors: Record<string, string> = {
-  "Placed": "bg-blue-50 text-blue-600",
-  "Out for Delivery": "bg-amber-50 text-amber-600",
-  "Delivered": "bg-green-50 text-green-600",
-};
+import api from '../config/api';
+import toast from 'react-hot-toast';
+import { statusColors } from '../assets/assets';
 
 const MyOrders = () => {
 
@@ -27,13 +22,17 @@ const MyOrders = () => {
   const { clearCart } = useCart()
 
   const fetchOrders = async () => {
-    // Filters items from local mock file based on selected tab state
-    const data = activeTab === "all"
-      ? dummyDashboardOrdersData
-      : dummyDashboardOrdersData.filter(order => order.status === activeTab);
+    setLoading(true)
+    try {
+        const params = activeTab !== "all" ? `?status=${activeTab}` : "";
+        const { data } = await api.get(`/orders${params}`)
+        setOrders(data.orders)
+    } catch (error: any) {
+        toast.error(error.response?.data?.message || error?.message);
+    }finally{
+        setLoading(false);
+    }
 
-    setOrders(data as any)
-    setLoading(false)
   }
 
   useEffect(() => {
@@ -85,15 +84,15 @@ const MyOrders = () => {
           <div className="space-y-4">
             {orders.map((order) => (
               <Link 
-                key={order._id} 
-                to={`/orders/${order._id}`} 
+                key={order.id} 
+                to={`/orders/${order.id}`} 
                 className="block max-w-4xl bg-white rounded-2xl p-5 hover:shadow transition-all"
               >
                 {/* order id, date & status */}
                 <div className="flex items-start justify-between mb-3">
                   {/* left */}
                   <div>
-                    <p className="text-sm font-medium text-app-green">Order #{order._id.slice(-8).toUpperCase()}</p>
+                    <p className="text-sm font-medium text-app-green">Order #{order.id.slice(-8).toUpperCase()}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <CalendarIcon className="size-3 text-app-text-light" />
                       <span className="text-xs text-app-text-light">

@@ -1127,15 +1127,15 @@ declare type EngineProtocol = 'graphql' | 'json';
 declare type EngineSpan = {
     span: boolean;
     name: string;
-    trace_id: string;
-    span_id: string;
-    parent_span_id: string;
+    traceid: string;
+    spanid: string;
+    parent_spanid: string;
     start_time: [number, number];
     end_time: [number, number];
     attributes?: Record<string, string>;
     links?: {
-        trace_id: string;
-        span_id: string;
+        traceid: string;
+        spanid: string;
     }[];
 };
 
@@ -2654,7 +2654,7 @@ declare interface RequestError {
         message: string;
         meta?: Record<string, unknown>;
         error_code?: string;
-        batch_request_idx?: number;
+        batch_requestidx?: number;
     };
 }
 

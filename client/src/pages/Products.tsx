@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import type { Product } from "../types";
-import { categoriesData, dummyProducts } from "../assets/assets";
+import { categoriesData} from "../assets/assets";
 import { ChevronDown, Home, SlidersHorizontal, X } from "lucide-react";
 import ProductCard from "../components/Home/ProductCard";
 import Loading from "../components/Loading";
 import FilterPanel from "../components/FilterPanel";
+import toast from "react-hot-toast";
+import api from "../config/api";
 
 const Products = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [products, setProducts] = useState<Product[]>([]);
-    // If pagination is managed locally, you can change this dynamically based on products length
-    const [totalPages] = useState(3); 
+    const [totalPages,setTotalPages] = useState(1); 
     const [loading, setLoading] = useState(true);
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
@@ -21,6 +22,28 @@ const Products = () => {
     const page = Number(searchParams.get("page")) || 1;
     const minPrice = searchParams.get("minPrice") || "";
     const maxPrice = searchParams.get("maxPrice") || "";
+   
+    const fetchProducts = async () => {
+    setLoading(true)
+    try{
+      const params = new URLSearchParams()
+      if(category) params.set('category', category)
+      if(organic) params.set('organic', organic)
+      if(sort) params.set('sort', sort)
+      if(sort) params.set('sort', sort)
+      if(maxPrice) params.set('maxPrice', maxPrice)
+        params.set("page", String(page))
+        params.set("limit", "12")
+
+        const { data } = await api.get(`/products?${params.toString()}`);
+        setProducts(data.products)
+        setTotalPages(data.pages)
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message || error?.message);
+        } finally {
+            setLoading(false)
+        }
+  }
 
     const updateFilter = (key: string, value: string) => {
         const newParams = new URLSearchParams(searchParams);
@@ -35,57 +58,12 @@ const Products = () => {
         setSearchParams(newParams);
     };
        
-    const clearFilters = () => setSearchParams({});
-    const activeCategory = categoriesData.find((c) => c.slug === category);
-    
-    // We calculate this here so we can pass the true/false value down to your sir's component
-    const hasFilters = Boolean(category || organic || minPrice || maxPrice);
+      const clearFilters = () => setSearchParams({})
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            setLoading(true);
-            
-            // 1. Filter out items matching the active category context
-            let updatedProducts = dummyProducts.filter(
-                (p) => p.category === category || category === ""
-            );
-
-            // 2. Filter out by Minimum Price boundary context
-            if (minPrice) {
-                updatedProducts = updatedProducts.filter(
-                    (p) => p.price >= Number(minPrice)
-                );
-            }
-
-            // 3. Filter out by Maximum Price boundary context
-            if (maxPrice) {
-                updatedProducts = updatedProducts.filter(
-                    (p) => p.price <= Number(maxPrice)
-                );
-            }
-
-            // 4. Client-side sorting computation array pipeline execution
-            if (sort) {
-                updatedProducts = [...updatedProducts].sort((a, b) => {
-                    switch (sort) {
-                        case "price_asc":
-                            return a.price - b.price;
-                        case "price_desc":
-                            return b.price - a.price;
-                        case "rating":
-                            return (b.rating || 0) - (a.rating || 0);
-                        case "name":
-                            return a.name.localeCompare(b.name);
-                        default:
-                            return 0; 
-                    }
-                });
-            }
-
-            setProducts(updatedProducts);
-            setLoading(false);
-        };
-
+      const activeCategory = categoriesData.find((c) => c.slug === category);
+      const hasFilters = category || organic || minPrice || maxPrice;
+      
+      useEffect(() => {
         fetchProducts();
     }, [category, organic, sort, page, minPrice, maxPrice]);
 
@@ -170,7 +148,7 @@ const Products = () => {
                     {products
                       .filter((product) => product.stock > 0)
                       .map((product) => (
-                        <ProductCard key={product._id} product={product}/>
+                        <ProductCard key={product.id} product={product}/>
                     ))}
                   </div>
                 )}
