@@ -32,7 +32,13 @@ export default function AdminProducts() {
 
     const handleMarkOutOfStock = async (id: string, name: string) => {
         if (!window.confirm(`Are you sure you want to mark "${name}" as out of stock?`)) return;
-          
+          try {
+            await api.delete(`/products/${id}`)
+            toast.success("Product marked as out of stock");
+            fetchProducts();
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Failed to update product");
+        }
     };
 
     if (loading) return <Loading />

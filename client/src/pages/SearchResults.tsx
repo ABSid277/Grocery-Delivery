@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Product } from '../types'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Home, Search } from 'lucide-react'

@@ -3,8 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom" 
 import { useCart } from "../context/CartContext"; 
 import { Address } from "../types";
-import { ArrowLeft, CheckIcon, ChevronRightIcon, CreditCardIcon, Key, MapPinIcon } from "lucide-react";
-import { icon } from "leaflet";
+import { ArrowLeft, CheckIcon, ChevronRightIcon, CreditCardIcon, MapPinIcon } from "lucide-react";
 import CheckoutAddress from "../components/Checkout/CheckoutAddress";
 import CheckoutPayment from "../components/Checkout/CheckoutPayment";
 import CheckoutReview from "../components/Checkout/CheckoutReview";
@@ -39,7 +38,7 @@ const deliveryFee=cartTotal > 20 ? 0 : 1.99;
 const tax=cartTotal * 0.08;
 const total=cartTotal + deliveryFee + tax ;
 
-const steps: {key:string ; label : string; icon:typeof MapPinIcon} =[
+const steps: {key:string ; label : string; icon:typeof MapPinIcon}[] =[
   {key:"address",label:"Address",icon:MapPinIcon},
   {key:"payment",label:"Payment",icon:CreditCardIcon},
   {key:"review",label:"Review",icon:CheckIcon},

@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { dummyProducts } from '../../assets/assets';
+import { useState, useEffect } from 'react';
 import { Product } from '../../types';
 import { Link } from 'react-router-dom';
 import { ArrowRightIcon } from 'lucide-react';

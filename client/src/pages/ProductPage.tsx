@@ -20,21 +20,28 @@ const ProductPage = () => {
     const [loading,setLoading]=useState(true);
     const [localQuantity,setLocalQuantity]=useState(1);
 
-    const handleMinus = () => {
-   if(inCart){
-      if(cartItem.quantity > 1) updateQuantity(product.id, cartItem.quantity - 1)
-        else removeFromCart(product.id)
-    }else{
-      setLocalQuantity(Math.max(1, localQuantity - 1))
-    }
+   const handleMinus = () => {
+  if (!product) return;
+
+  if (inCart) {
+    if (cartItem.quantity > 1)
+      updateQuantity(product.id, cartItem.quantity - 1);
+    else
+      removeFromCart(product.id);
+  } else {
+    setLocalQuantity(Math.max(1, localQuantity - 1));
   }
-   const handlePlus = () => {
-   if(inCart){
-      updateQuantity(product.id, cartItem.quantity + 1)
-    }else{
-      setLocalQuantity(localQuantity + 1)
-    }
+};
+
+const handlePlus = () => {
+  if (!product) return;
+
+  if (inCart) {
+    updateQuantity(product.id, cartItem.quantity + 1);
+  } else {
+    setLocalQuantity(localQuantity + 1);
   }
+};
 
     useEffect(() => {
         setLoading(true)

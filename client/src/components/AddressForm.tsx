@@ -1,5 +1,4 @@
 import { XIcon } from 'lucide-react'
-import React from 'react'
 
 const AddressForm = ({resetForm,handleSubmit,form,setForm,editingId}:any) => {
   return (
@@ -47,7 +46,6 @@ const AddressForm = ({resetForm,handleSubmit,form,setForm,editingId}:any) => {
                 mb-1.5">State</label>
                 <input type="text" required className="w-full px-4 py-2.5 text-sm rounded-xl border border-app-border focus:border-app-green outline-none"
                 value={form.state}
-                I
                 onChange={(e) => setForm({...form, state: e.target.value})}/>
                 </div>
               </div>
